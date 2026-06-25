@@ -1,0 +1,52 @@
+name: Releases
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - "v*"
+
+jobs:
+  build-macos:
+    runs-on: macos-26-intel
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller wxPython
+
+      - name: Verify icon exists
+        run: ls docs/images
+
+      - name: Build .app with icon
+        run: |
+          pyinstaller \
+            --windowed \
+            --name Tooler \
+            --icon docs/images/Tooler.icns \
+            apnetso.py
+
+      - name: Create .pkg
+        run: |
+          mkdir -p pkgroot/Applications
+          cp -R dist/Tooler.app pkgroot/Applications/
+
+          pkgbuild \
+            --root pkgroot \
+            --identifier com.tooler.app \
+            --version 1.0.0 \
+            Tooler.pkg
+
+      - name: Upload PKG
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tooler-macOS-pkg
+          path: Tooler.pkg
