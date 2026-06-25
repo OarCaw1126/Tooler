@@ -23,15 +23,11 @@ jobs:
         run: |
           pip install pyinstaller wxPython
 
-      - name: Verify icon exists
-        run: ls docs/images
-
-      - name: Build .app with icon
+      - name: Build .app
         run: |
           pyinstaller \
             --windowed \
             --name Tooler \
-            --icon docs/images/Tooler.icns \
             apnetso.py
 
       - name: Create .pkg
