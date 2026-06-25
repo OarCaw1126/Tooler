@@ -28,7 +28,7 @@ jobs:
           pyinstaller \
             --windowed \
             --name Tooler \
-            apnetso.py
+            Tooler.py
 
       - name: Create .pkg
         run: |
